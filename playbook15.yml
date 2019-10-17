@@ -1,0 +1,23 @@
+---
+- name: Learning about block and rescue
+  hosts: planetexpress
+  gather_facts: yes
+
+  tasks: 
+        - name: Pre-check block 
+          block:
+                  - name: preckeck step1
+                  - shell: "echo 'precheck step1' > example.txt"
+
+                  - name: precheck step2
+                  - shell: "echo 'precheck step2' >> example.txt"
+
+                  - name: a real example of a precheck step
+                    fail: 
+                          msg: "Precheck FAILED!"
+                    when: ansible_os_family != "Debian"
+
+           rescue:
+                   - name: Precheck failed 
+                     fail: 
+                           msg: "Precheck FAILED! Nothing to roll back. Exiting ..."

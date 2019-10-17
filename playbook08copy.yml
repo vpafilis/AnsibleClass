@@ -1,0 +1,22 @@
+---
+ - name: Example of copying a file to remote hosts 
+   hosts: planetexpress
+   gather_facts:  yes 
+
+   tasks:
+     - name: Copying file from controller to remote hosts
+       copy: 
+             src: /home/student/ans/files/fryresume.txt 
+             #dest: ~/new_fryresume.txt
+             dest: "/home/{{ ansible_user }}/fryresume.txt"
+        
+     - name: Removing file from remote hosts
+       file:
+              path: "/home/{{ ansible_user }}/fryresume.txt"
+              state: absent
+
+     - name: download a file to my remote servers 
+       get_url:
+                url: http://www.clamav.net/downloads/production/clamav-0.99.3.tar.gz
+                dest: ~/clamav-0.99.3.tar.gz
+

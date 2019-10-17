@@ -1,0 +1,32 @@
+---
+- name: find /files 
+  find:
+          paths: "{{ pathy }}" 
+          patterns: "{{ patt }}" 
+          # size: 10m
+          recurse: yes
+  register: results
+
+- name: what the heck is in ther returned results?
+  debug:
+          var: results.files
+          verbosity: 1 # turn debug off without commenting it out ....
+# 
+# Next, create a directory to store the results in ... However .... 
+# the "file" module does create the directory if it does not exist. 
+# Do not have to create the directory.
+#
+- name: create  a dir to save our stuff in 
+  file: 
+    path: "~/searchresults/{{ inventory_hostname }}"
+    state: directory
+  delegate_to: localhost
+  run_once: yes    #you only need to create the directory on the localhost once and not as many times as hosts.
+# parse the results that come back (loop)
+# pull them back to the controller (fetch module)
+- name: pull our files back to the controller
+  fetch: 
+       src: "{{ item.path }}"
+       dest: "~/searchresults/{{ inventory_hostname }}/"
+       flat: yes
+  loop: "{{ results.files }}"
